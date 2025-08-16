@@ -1,12 +1,12 @@
 package co.edu.uniquindio.Clases;
 
-public class Veterinaria {
+public class ClinicaVeterinaria {
 
     private String nombre;
     private String direccion;
     private String id;
 
-    public Veterinaria(String nombre, String direccion, String id) {
+    public ClinicaVeterinaria(String nombre, String direccion, String id) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.id = id;
