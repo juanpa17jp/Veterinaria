@@ -191,17 +191,17 @@ public class panelViewController implements Initializable {
 
     @FXML
     void btnLimpiarCamposMascota(ActionEvent event) {
-
+        limpiarCamposMascota();
     }
 
     @FXML
     void btnLimpiarCamposPersonal(ActionEvent event) {
-
+        limpiarCamposPersonal();
     }
 
     @FXML
     void btnLimpiarCamposPropietario(ActionEvent event) {
-
+        limpiarCamposPropietario();
     }
 
     @FXML
@@ -209,12 +209,20 @@ public class panelViewController implements Initializable {
         String nombre = txtfieldNombreMascota.getText();
         String especie = txtFieldEspecie.getText();
         String raza = txtFieldRaza.getText();
-        int edad = Integer.parseInt(txtFieldEdad.getText());
+        String edadText = txtFieldEdad.getText();
         String id = txtFieldIdMascota.getText();
         String cedulaPropietario = txtFieldPropietario.getText();
 
-        if (nombre == null || especie== null || raza == null || id == null || cedulaPropietario == null || edad <= 0) {
+        if (nombre == null || especie== null || raza == null || id == null || cedulaPropietario == null || edadText.isEmpty()) {
             mostrarAlerta("Error", "Todos los campos son obligatorios", Alert.AlertType.ERROR);
+            return;
+        }
+
+        int edad = 0;
+        try {
+            edad = Integer.parseInt(edadText);
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "La edad debe ser un número válido", Alert.AlertType.ERROR);
             return;
         }
 
@@ -238,7 +246,39 @@ public class panelViewController implements Initializable {
 
     @FXML
     void btnRegistrarPersonal(ActionEvent event) {
+        String nombre = txtFieldNombrePersonal.getText();
+        String apellido = txtFieldApellidoPersonal.getText();
+        String cedula = txtFieldCedulaPersonal.getText();
+        String telefonoText = txtFieldTelefonoPersonal.getText();
+        String direccion = txtFieldDireccionPersonal.getText();
 
+        if (nombre == null || apellido == null || cedula == null || telefonoText.isEmpty() || direccion == null) {
+            mostrarAlerta("Error", "Todos los campos son obligatorios", Alert.AlertType.ERROR);
+            return;
+        }
+
+        int telefono = 0;
+        try {
+            telefono = Integer.parseInt(telefonoText);
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "La edad debe ser un número válido", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if (controller.registrarPersonalApoyo(nombre, apellido, cedula, direccion, telefono)) {
+            mostrarAlerta("Éxito", "Personal registrado correctamente", Alert.AlertType.INFORMATION);
+            limpiarCamposPersonal();
+        } else {
+            mostrarAlerta("Error", "No se pudo registrar el personal. Verifique los datos.", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void limpiarCamposPersonal() {
+        txtFieldNombrePersonal.clear();
+        txtFieldApellidoPersonal.clear();
+        txtFieldCedulaPersonal.clear();
+        txtFieldTelefonoPersonal.clear();
+        txtFieldDireccionPersonal.clear();
     }
 
     @FXML
@@ -246,11 +286,19 @@ public class panelViewController implements Initializable {
         String nombre = txtFieldNombre.getText();
         String apellido = txtFieldApellidoPropietario.getText();
         String cedula = txtFieldCedulaPropietario.getText();
-        int telefono = Integer.parseInt(txtFieldTelefonoPropietario.getText());
+        String telefonoText = txtFieldTelefonoPropietario.getText(); // Obtener el texto como String
         String direccion = txtFieldDireccionPropietario.getText();
 
-        if (nombre== null || apellido == null || cedula == null || telefono == 0 || direccion == null) {
+        if (nombre == null || apellido == null || cedula == null || telefonoText.isEmpty() || direccion == null) {
             mostrarAlerta("Error", "Todos los campos son obligatorios", Alert.AlertType.ERROR);
+            return;
+        }
+
+        int telefono = 0;
+        try {
+            telefono = Integer.parseInt(telefonoText);
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "El teléfono debe ser un número válido", Alert.AlertType.ERROR);
             return;
         }
 
@@ -306,7 +354,7 @@ public class panelViewController implements Initializable {
 
     @FXML
     void limpiarCamposVeterinario(ActionEvent event) {
-
+        limpiarCamposVeterinario();
     }
 
     @FXML
@@ -326,9 +374,44 @@ public class panelViewController implements Initializable {
 
     @FXML
     void registrarVeterinario(ActionEvent event) {
+        String nombre = txtFieldNombreVeterinario.getText();
+        String apellido = txtFieldApellidoVeterinario.getText();
+        String cedula = txtFieldCedulaVeterinario.getText();
+        String telefonoText = txtFieldTelefonoVeterinario.getText();
+        String direccion = txtFieldDireccionVeterinario.getText();
+        Especialidad especialidad = cmboxEspecialidad.getValue();
+        String licencia = txtFieldIdLicencia.getText();
 
+        if (nombre==null || apellido == null || cedula == null || telefonoText.isEmpty() || direccion == null || especialidad == null) {
+            mostrarAlerta("Error", "Todos los campos son obligatorios", Alert.AlertType.ERROR);
+            return;
+        }
+
+        int telefono = 0;
+        try {
+            telefono = Integer.parseInt(telefonoText);
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "El teléfono debe ser un número válido", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if (controller.registrarVeterinario(nombre, apellido, cedula, direccion, telefono, especialidad, licencia)) {
+            mostrarAlerta("Éxito", "Veterinario registrado correctamente", Alert.AlertType.INFORMATION);
+            limpiarCamposVeterinario();
+        } else {
+            mostrarAlerta("Error", "No se pudo registrar el veterinario. Verifique los datos.", Alert.AlertType.ERROR);
+        }
     }
 
+    private void limpiarCamposVeterinario() {
+        txtFieldNombreVeterinario.clear();
+        txtFieldApellidoVeterinario.clear();
+        txtFieldCedulaVeterinario.clear();
+        txtFieldTelefonoVeterinario.clear();
+        txtFieldDireccionVeterinario.clear();
+        cmboxEspecialidad.setValue(null);
+        txtFieldIdLicencia.clear();
+    }
 
 
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {

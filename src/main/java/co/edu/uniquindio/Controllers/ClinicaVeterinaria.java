@@ -110,7 +110,7 @@ public class ClinicaVeterinaria {
     public Propietario buscarPropietario(String cedulaPropietario) {
         Propietario propietarioEncontrado = null;
         for (Propietario propietario : propietarios) {
-            if (propietario.getNombre().equals(cedulaPropietario)) {
+            if (propietario.getId().equals(cedulaPropietario)) {
                 propietarioEncontrado = propietario;
             }
         }
