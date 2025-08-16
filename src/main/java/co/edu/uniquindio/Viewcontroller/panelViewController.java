@@ -123,6 +123,9 @@ public class panelViewController implements Initializable {
     private ObservableList<Mascota> mascotas = FXCollections.observableArrayList();
     private ObservableList<Propietario> propietarios = FXCollections.observableArrayList();
     private ObservableList<Veterinario> veterinarios = FXCollections.observableArrayList();
+    private ObservableList<PersonalApoyo> trabajadores = FXCollections.observableArrayList();
+    private ObservableList<Cita> citas = FXCollections.observableArrayList();
+    private ObservableList<AgendaCita> agendaCitas = FXCollections.observableArrayList();
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         inicializarTablas();
@@ -162,7 +165,7 @@ public class panelViewController implements Initializable {
         clCedulaPersonal.setCellValueFactory(new PropertyValueFactory<>("id"));
         clTelefonoPersonal.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         clDireccionPersonal.setCellValueFactory(new PropertyValueFactory<>("direccion"));
-        //tbPersonal.setItems(controller.getPersonalApoyo());
+        cargarPersonal();
 
         // Configurar tabla de citas agendadas
         clFechaAgendada.setCellValueFactory(new PropertyValueFactory<>("fecha"));
@@ -268,6 +271,7 @@ public class panelViewController implements Initializable {
         if (controller.registrarPersonalApoyo(nombre, apellido, cedula, direccion, telefono)) {
             mostrarAlerta("Éxito", "Personal registrado correctamente", Alert.AlertType.INFORMATION);
             limpiarCamposPersonal();
+            cargarPersonal();
         } else {
             mostrarAlerta("Error", "No se pudo registrar el personal. Verifique los datos.", Alert.AlertType.ERROR);
         }
@@ -330,6 +334,10 @@ public class panelViewController implements Initializable {
     public void cargarVeterinarios(){
         veterinarios.setAll(controller.getVeterinarios());
         tbVeterinarios.setItems(veterinarios);
+    }
+    public void cargarPersonal(){
+        trabajadores.setAll(controller.getTrabajadores());
+        tbPersonal.setItems(trabajadores);
     }
 
     @FXML
@@ -398,6 +406,7 @@ public class panelViewController implements Initializable {
         if (controller.registrarVeterinario(nombre, apellido, cedula, direccion, telefono, especialidad, licencia)) {
             mostrarAlerta("Éxito", "Veterinario registrado correctamente", Alert.AlertType.INFORMATION);
             limpiarCamposVeterinario();
+            cargarVeterinarios();
         } else {
             mostrarAlerta("Error", "No se pudo registrar el veterinario. Verifique los datos.", Alert.AlertType.ERROR);
         }
