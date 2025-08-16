@@ -1,39 +1,31 @@
 package co.edu.uniquindio.Clases;
-
-<<<<<<< Updated upstream
-=======
 import co.edu.uniquindio.Enums.Especialidad;
-
 import java.util.ArrayList;
 
 
->>>>>>> Stashed changes
+
 public class ClinicaVeterinaria {
 
     private String nombre;
     private String direccion;
     private String id;
-<<<<<<< Updated upstream
-=======
+
     private ArrayList<Mascota> mascotas;
     private ArrayList<Propietario> propietarios;
     private ArrayList<Veterinario> veterinarios;
     private ArrayList<PersonalApoyo> trabajadores;
 
->>>>>>> Stashed changes
+
 
     public ClinicaVeterinaria(String nombre, String direccion, String id) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.id = id;
-<<<<<<< Updated upstream
-=======
+
         this.mascotas = new ArrayList<>();
         this.propietarios = new ArrayList<>();
         this.veterinarios = new ArrayList<>();
         this.trabajadores = new ArrayList<>();
-
->>>>>>> Stashed changes
     }
 
     public String getNombre() {
@@ -59,9 +51,6 @@ public class ClinicaVeterinaria {
     public void setId(String id) {
         this.id = id;
     }
-<<<<<<< Updated upstream
-}
-=======
 
     public ArrayList<Mascota> getMascotas() {
         return mascotas;
@@ -134,7 +123,7 @@ public class ClinicaVeterinaria {
 
         for (Propietario propietarioExistente : propietarios) {
             if (propietarioExistente.getId().equals(id)) {
-                System.out.println("Error: Ya existe una mascota con ID: " + id);
+                System.out.println("Error: Ya existe un propietario con ID: " + id);
                 return false;
             }
         }
@@ -159,7 +148,7 @@ public class ClinicaVeterinaria {
 
         for (PersonalApoyo trabajadorExistente : trabajadores) {
             if (trabajadorExistente.getId().equals(id)) {
-                System.out.println("Error: Ya existe una mascota con ID: " + id);
+                System.out.println("Error: Ya existe un trabajador con ID: " + id);
                 return false;
             }
         }
@@ -189,7 +178,7 @@ public class ClinicaVeterinaria {
 
         for (Veterinario veterinarioExistente : veterinarios) {
             if (veterinarioExistente.getId().equals(id)) {
-                System.out.println("Error: Ya existe una mascota con ID: " + id);
+                System.out.println("Error: Ya existe un veterinario con ID: " + id);
                 return false;
             }
         }
@@ -202,5 +191,3 @@ public class ClinicaVeterinaria {
 
 }
 
-
->>>>>>> Stashed changes
