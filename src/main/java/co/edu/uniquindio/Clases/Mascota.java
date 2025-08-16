@@ -3,17 +3,21 @@ package co.edu.uniquindio.Clases;
 public class Mascota {
 
     private String nombre;
+    private String especie;
     private String raza;
     private int edad;
     private String ID;
     private Propietario propietario;
 
-    public Mascota(String nombre, String raza, int edad, String ID, Propietario propietario) {
+    public Mascota(String nombre, String especie, String raza, int edad, String ID, Propietario propietario) {
         this.nombre = nombre;
+        this.especie = especie;
         this.raza = raza;
         this.edad = edad;
         this.ID = ID;
         this.propietario = propietario;
+
+
     }
 
     public String getNombre() {
@@ -22,6 +26,14 @@ public class Mascota {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getEspecie() {
+        return especie;
+    }
+
+    public void setEspecie(String especie) {
+        this.especie = especie;
     }
 
     public String getRaza() {
