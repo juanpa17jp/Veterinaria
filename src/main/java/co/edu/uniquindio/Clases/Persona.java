@@ -4,14 +4,24 @@ public class Persona {
 
     private String nombre;
     private String id;
+    private String apellido;
     private String direccion;
     private int telefono;
 
-    public Persona(String nombre, String id, String direccion, int telefono) {
+    public Persona(String nombre, String apellido, String id, String direccion, int telefono) {
         this.nombre = nombre;
+        this.apellido = apellido;
         this.id = id;
         this.direccion = direccion;
         this.telefono = telefono;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
     public String getNombre() {
