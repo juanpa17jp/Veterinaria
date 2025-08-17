@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class panelViewController implements Initializable {
@@ -68,6 +69,10 @@ public class panelViewController implements Initializable {
     @FXML private TableColumn<Veterinario, String> clDireccionVeterinario;
     @FXML private TableColumn<Veterinario, Especialidad> clEspecialidad;
     @FXML private TableColumn<Veterinario, String> clLicencia;
+
+    @FXML private TextField txtFieldIdMascotaRecordatorio;
+    @FXML private Button btnEnviarRecordatorio;
+    @FXML private Button btnLimpiarRecordatorio;
 
     // FXML Components - Personal
     @FXML private TextField txtFieldNombrePersonal;
@@ -171,12 +176,12 @@ public class panelViewController implements Initializable {
         clFechaAgendada.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         clHoraAgendada.setCellValueFactory(new PropertyValueFactory<>("hora"));
         clMotivoagenda.setCellValueFactory(new PropertyValueFactory<>("motivoConsulta"));
-        //tbConsultasAgendada.setItems(controller.getCitasAgendadas());
+        cargarCitasAgendadas();
 
         // Configurar tabla de consultas
         clDiagnosticoConsulta.setCellValueFactory(new PropertyValueFactory<>("diagnostico"));
         clTratamientoConsulta.setCellValueFactory(new PropertyValueFactory<>("tratamiento"));
-        //tbConsultas.setItems(controller.getConsultasRealizadas());
+        cargarConsultas();
     }
 
     private void inicializarComboBoxes() {
@@ -189,7 +194,30 @@ public class panelViewController implements Initializable {
 
     @FXML
     void agendarConsulta(ActionEvent event) {
+        String idMascota = txtFieldMascota.getText();
+        String cedulaVeterinario = txtFieldVeterinario.getText();
+        String motivoConsulta = txtFieldMotivo.getText();
+        LocalDate fecha = dtpikFechaConsulta.getValue();
+        String hora = cmbxHoraConsulta.getValue();
 
+
+        if (idMascota.isEmpty() || cedulaVeterinario.isEmpty() || motivoConsulta.isEmpty() ||
+                fecha == null || hora == null) {
+            mostrarAlerta("Error", "Todos los campos son obligatorios", Alert.AlertType.ERROR);
+            return;
+        }
+
+
+        String fechaStr = fecha.toString();
+        String horaStr = hora + ":00";
+
+        if (controller.agendarCita(idMascota, cedulaVeterinario, motivoConsulta, fechaStr, horaStr)) {
+            mostrarAlerta("Éxito", "Cita agendada correctamente", Alert.AlertType.INFORMATION);
+            limpiarCamposAgendarConsulta();
+            cargarCitasAgendadas();
+        } else {
+            mostrarAlerta("Error", "No se pudo agendar la cita. Verifique los datos.", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -342,22 +370,65 @@ public class panelViewController implements Initializable {
 
     @FXML
     void consultarPorDia(ActionEvent event) {
+        String fechaConsulta = txtFieldConsultaPorDia.getText();
 
+        if (fechaConsulta.isEmpty()) {
+            mostrarAlerta("Error", "Debe ingresar una fecha (formato: YYYY-MM-DD)", Alert.AlertType.ERROR);
+            return;
+        }
+
+        try {
+            ArrayList<AgendaCita> citasDelDia = controller.obtenerCitasPorFecha(fechaConsulta);
+            agendaCitas.setAll(citasDelDia);
+            tbConsultasAgendada.setItems(agendaCitas);
+
+            if (citasDelDia.isEmpty()) {
+                mostrarAlerta("Información", "No hay citas agendadas para esta fecha", Alert.AlertType.INFORMATION);
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Formato de fecha inválido. Use YYYY-MM-DD", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
     void consultarTablaMascota(ActionEvent event) {
+        String idMascota = clConsultaPorMascota.getText();
 
+        if (idMascota.isEmpty()) {
+            mostrarAlerta("Error", "Debe ingresar el ID de la mascota", Alert.AlertType.ERROR);
+            return;
+        }
+
+        Mascota mascota = controller.buscarMascota(idMascota);
+        if (mascota == null) {
+            mostrarAlerta("Error", "Mascota no encontrada", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if (mascota.getHistoriaClinica() != null) {
+            citas.setAll(mascota.getHistoriaClinica().getCitasTerminadas());
+            tbConsultas.setItems(citas);
+        } else {
+            mostrarAlerta("Información", "Esta mascota no tiene historial clínico", Alert.AlertType.INFORMATION);
+            citas.clear();
+            tbConsultas.setItems(citas);
+        }
     }
 
     @FXML
     void limpiarCamposAgendarConsulta(ActionEvent event) {
-
+        dtpikFechaConsulta.setValue(null);
+        cmbxHoraConsulta.setValue(null);
+        txtFieldMascota.clear();
+        txtFieldVeterinario.clear();
+        txtFieldMotivo.clear();
     }
 
     @FXML
     void limpiarCamposConsulta(ActionEvent event) {
-
+        txtFieldDiagnosticoConsulta.clear();
+        txtFieldTratamientoConsulta.clear();
+        clConsultaPorMascota.clear();
     }
 
     @FXML
@@ -367,17 +438,60 @@ public class panelViewController implements Initializable {
 
     @FXML
     void refrescarTablaAgendarConsulta(ActionEvent event) {
-
+        cargarCitasAgendadas();
     }
 
     @FXML
     void refrescarTablaConsulta(ActionEvent event) {
-
+        cargarConsultas();
+    }
+    private void cargarCitasAgendadas() {
+        agendaCitas.setAll(controller.getCitas());
+        tbConsultasAgendada.setItems(agendaCitas);
+    }
+    private void cargarConsultas() {
+        citas.clear();
+        for (Mascota mascota : controller.getMascotas()) {
+            if (mascota.getHistoriaClinica() != null) {
+                citas.addAll(mascota.getHistoriaClinica().getCitasTerminadas());
+            }
+        }
+        tbConsultas.setItems(citas);
+    }
+    private void limpiarCamposAgendarConsulta() {
+        dtpikFechaConsulta.setValue(null);
+        cmbxHoraConsulta.setValue(null);
+        txtFieldMascota.clear();
+        txtFieldVeterinario.clear();
+        txtFieldMotivo.clear();
+    }
+    private void limpiarCamposConsulta() {
+        txtFieldDiagnosticoConsulta.clear();
+        txtFieldTratamientoConsulta.clear();
+        clConsultaPorMascota.clear();
     }
 
     @FXML
     void registrarConsulta(ActionEvent event) {
+        String diagnostico = txtFieldDiagnosticoConsulta.getText();
+        String tratamiento = txtFieldTratamientoConsulta.getText();
+        String idMascota = clConsultaPorMascota.getText(); // Asumiendo que este campo contiene el ID de la mascota
 
+        if (diagnostico.isEmpty() || tratamiento.isEmpty() || idMascota.isEmpty()) {
+            mostrarAlerta("Error", "Todos los campos son obligatorios", Alert.AlertType.ERROR);
+            return;
+        }
+
+        Cita nuevaCita = new Cita(diagnostico, tratamiento);
+
+        try {
+            controller.guardarCitaEnHistoriaClinica(idMascota, nuevaCita);
+            mostrarAlerta("Éxito", "Consulta registrada correctamente", Alert.AlertType.INFORMATION);
+            limpiarCamposConsulta();
+            cargarConsultas();
+        } catch (IllegalArgumentException e) {
+            mostrarAlerta("Error", "Mascota no encontrada", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -422,6 +536,55 @@ public class panelViewController implements Initializable {
         txtFieldIdLicencia.clear();
     }
 
+    @FXML
+    void enviarRecordatorio(ActionEvent event) {
+        String idMascota = txtFieldIdMascotaRecordatorio.getText();
+
+        // Validación del campo
+        if (idMascota == null || idMascota.trim().isEmpty()) {
+            mostrarAlerta("Error", "Debe ingresar el ID de la mascota", Alert.AlertType.ERROR);
+            return;
+        }
+
+        try {
+            // Verificar que la mascota existe
+            Mascota mascota = controller.buscarMascota(idMascota.trim());
+            if (mascota == null) {
+                mostrarAlerta("Error", "No se encontró una mascota con el ID: " + idMascota, Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Enviar recordatorio
+            controller.enviarRecordatorioCitas(idMascota.trim());
+
+            // Mostrar mensaje de éxito con información de la mascota
+            String mensaje = String.format(
+                    "Recordatorio enviado correctamente!\n\n" +
+                            "Mascota: %s\n" +
+                            "Propietario: %s %s\n" +
+                            "Teléfono: %d",
+                    mascota.getNombre(),
+                    mascota.getPropietario().getNombre(),
+                    mascota.getPropietario().getApellido(),
+                    mascota.getPropietario().getTelefono()
+            );
+
+            mostrarAlerta("Éxito", mensaje, Alert.AlertType.INFORMATION);
+            limpiarCamposRecordatorio();
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al enviar recordatorio: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    void limpiarCamposRecordatorio(ActionEvent event) {
+        limpiarCamposRecordatorio();
+    }
+
+    private void limpiarCamposRecordatorio() {
+        txtFieldIdMascotaRecordatorio.clear();
+    }
 
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alert = new Alert(tipo);
