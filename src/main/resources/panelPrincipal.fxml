@@ -500,4 +500,44 @@
          </HBox>
       </content>
    </Tab>
+    <!-- Agregar este Tab antes del cierre de </TabPane> en tu panelPrincipal.fxml -->
+
+    <Tab text="Enviar Recordatorios">
+        <content>
+            <VBox alignment="CENTER" spacing="40.0" style="-fx-padding: 50">
+                <children>
+                    <Label text="Envío de Recordatorios de Citas">
+                        <font>
+                            <Font name="System Bold" size="25.0" />
+                        </font>
+                    </Label>
+
+                    <VBox alignment="CENTER" spacing="20.0" style="-fx-padding: 30;">
+                        <children>
+                            <Label text="Ingrese el ID de la mascota para enviar recordatorio">
+                                <font>
+                                    <Font size="18.0" />
+                                </font>
+                            </Label>
+
+                            <HBox alignment="CENTER" spacing="15.0">
+                                <children>
+                                    <Label text="ID Mascota:">
+                                        <font>
+                                            <Font size="16.0" />
+                                        </font>
+                                    </Label>
+                                    <TextField fx:id="txtFieldIdMascotaRecordatorio" prefWidth="200.0" promptText="Ejemplo: M001" />
+                                    <Button fx:id="btnEnviarRecordatorio" mnemonicParsing="false" onAction="#enviarRecordatorio" text="Enviar Recordatorio"
+                                            style="-fx-font-size: 14px;" />
+                                </children>
+                            </HBox>
+
+                            <Button fx:id="btnLimpiarRecordatorio" mnemonicParsing="false" onAction="#limpiarCamposRecordatorio" text="Limpiar" />
+                        </children>
+                    </VBox>
+                </children>
+            </VBox>
+        </content>
+    </Tab>
 </TabPane>

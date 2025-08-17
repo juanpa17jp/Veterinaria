@@ -17,7 +17,7 @@ public class Mascota {
         this.edad = edad;
         this.ID = ID;
         this.propietario = propietario;
-        this.historiaClinica = historiaClinica;
+        this.historiaClinica = new HistoriaClinica(this);
 
 
     }

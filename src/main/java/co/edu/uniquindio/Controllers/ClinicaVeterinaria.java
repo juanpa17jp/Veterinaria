@@ -39,9 +39,9 @@ public class ClinicaVeterinaria {
         this.propietarios = new ArrayList<>();
         this.veterinarios = new ArrayList<>();
         this.trabajadores = new ArrayList<>();
-        this.citas = new ArrayList<>(); 
-        this.historiasClinicas = new ArrayList<>();
         this.citas = new ArrayList<>();
+        this.historiasClinicas = new ArrayList<>();
+        this.citasTerminadas = new ArrayList<>();
     }
 
     public String getNombre() {
@@ -203,16 +203,25 @@ public class ClinicaVeterinaria {
             return false;
         }
 
-        // Verificar disponibilidad del veterinario en la fecha y hora especificadas
-        boolean veterinarioDisponible = citas.stream().anyMatch(cita ->
-            cita.getFecha().equals(LocalDate.parse(fecha)) &&
-            cita.getHora().equals(LocalTime.parse(hora)) &&
-            cita.getVeterinario().equals(veterinario)
+
+        boolean veterinarioOcupado = citas.stream().anyMatch(cita ->
+                cita.getFecha().equals(LocalDate.parse(fecha)) &&
+                        cita.getHora().equals(LocalTime.parse(hora)) &&
+                        cita.getVeterinario().equals(veterinario)
         );
 
+        if (veterinarioOcupado) {
+            return false; // Veterinario no disponible
+        }
+
         AgendaCita nuevaCita = new AgendaCita(LocalDate.parse(fecha), LocalTime.parse(hora), motivoConsulta, mascota, veterinario);
-        nuevaCita.setMascota(mascota);
-        nuevaCita.setVeterinario(veterinario);
+        citas.add(nuevaCita);
+
+
+        if (mascota.getHistoriaClinica() == null) {
+            mascota.setHistoriaClinica(new HistoriaClinica(mascota));
+        }
+        mascota.getHistoriaClinica().getCitas().add(nuevaCita);
 
         return true;
     }
