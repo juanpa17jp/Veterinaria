@@ -8,6 +8,7 @@ import co.edu.uniquindio.Clases.AgendaCita;
 import co.edu.uniquindio.Clases.HistoriaClinica;
 import co.edu.uniquindio.Clases.Cita;
 import java.util.ArrayList;
+import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -206,12 +207,12 @@ public class ClinicaVeterinaria {
         boolean veterinarioDisponible = citas.stream().anyMatch(cita ->
             cita.getFecha().equals(LocalDate.parse(fecha)) &&
             cita.getHora().equals(LocalTime.parse(hora)) &&
-            cita.getVeterinarios().contains(veterinario)
+            cita.getVeterinario().equals(veterinario)
         );
 
-        AgendaCita nuevaCita = new AgendaCita(LocalDate.parse(fecha), LocalTime.parse(hora), motivoConsulta);
-        nuevaCita.getMascotas().add(mascota);
-        nuevaCita.getVeterinarios().add(veterinario);
+        AgendaCita nuevaCita = new AgendaCita(LocalDate.parse(fecha), LocalTime.parse(hora), motivoConsulta, mascota, veterinario);
+        nuevaCita.setMascota(mascota);
+        nuevaCita.setVeterinario(veterinario);
 
         return true;
     }
@@ -247,10 +248,47 @@ public class ClinicaVeterinaria {
 
         historia.agregarCita(cita);
         }
-    }
+    
 
     // Funcionalidad unica   
     //Metodo que permite enviar recordatorios de las citas agendadas a los propietarios de las mascotas
+    public void enviarRecordatorioCitas(String idMascota) {
+        Mascota mascota = mascotas.stream()
+                .filter(m -> m.getID().equals(idMascota))
+                .findFirst()
+                .orElse(null);
+
+        if (mascota == null) {
+            System.out.println("⚠ Mascota no encontrada con ID: " + idMascota);
+            return;
+        }
+
+        ArrayList<AgendaCita> citas = mascota.getHistoriaClinica().getCitas();
+        if (citas.isEmpty()) {
+            System.out.println("✅ No hay citas agendadas para " + mascota.getNombre());
+            return;
+        }
+
+        Propietario propietario = mascota.getPropietario();
+        int telefono = propietario.getTelefono();
+
+        StringBuilder mensaje = new StringBuilder("Recordatorio de citas para " + mascota.getNombre() + ":");
+
+        for (AgendaCita cita : citas) {
+            mensaje.append("\n - ")
+                   .append("Fecha: ").append(cita.getFecha())
+                   .append(" | Hora: ").append(cita.getHora())
+                   .append(" | Motivo: ").append(cita.getMotivoConsulta())
+                   .append(" | Veterinario: ").append(cita.getVeterinario().getNombre());
+        }
+
+        // Simulación de envío
+        System.out.println("Enviando SMS/WhatsApp a " + telefono);
+        System.out.println(mensaje.toString());
+    }
+}
+       
+   
 
 
 

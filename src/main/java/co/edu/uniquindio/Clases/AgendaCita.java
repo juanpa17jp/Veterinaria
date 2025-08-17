@@ -11,22 +11,32 @@ public class AgendaCita {
     private LocalTime hora;
     private String motivoConsulta;
 
-    private ArrayList<Mascota> mascotas;
-    private ArrayList<Veterinario> veterinarios;
+    private Mascota mascota;
+    private Veterinario veterinario;
+    private ArrayList<AgendaCita> citas;
 
-    public AgendaCita(LocalDate fecha, LocalTime hora, String motivoConsulta) {
+    public AgendaCita(LocalDate fecha, LocalTime hora, String motivoConsulta, Mascota mascota, Veterinario veterinario) {
         this.fecha = fecha;
         this.hora = hora;
         this.motivoConsulta = motivoConsulta;
 
-        this.mascotas = new ArrayList<>();
-        this.veterinarios = new ArrayList<>();
+        this.mascota = mascota;
+        this.veterinario = veterinario;
     } 
-    public List<Mascota> getMascotas() { 
-        return mascotas; 
+    public Mascota getMascota() { 
+        return mascota; 
     }
-    public List<Veterinario> getVeterinarios() { 
-        return veterinarios; 
+
+    public void setMascota(Mascota mascota) { 
+        this.mascota = mascota; 
+    }
+
+    public void setVeterinario(Veterinario veterinario) { 
+        this.veterinario = veterinario; 
+    }   
+
+    public Veterinario getVeterinario() { 
+        return veterinario; 
     }
     
     public LocalDate getFecha() {
@@ -51,5 +61,13 @@ public class AgendaCita {
 
     public void setMotivoConsulta(String motivoConsulta) {
         this.motivoConsulta = motivoConsulta;
+    }
+
+    public ArrayList<AgendaCita> getCitas() {
+        return citas;
+    }
+
+    public void agregarCita(AgendaCita cita) {
+        citas.add(cita);
     }
 }
