@@ -6,12 +6,20 @@ public class HistoriaClinica {
 
     private Mascota mascota;
     private ArrayList<Cita> citasTerminadas;
+    private ArrayList<AgendaCita> citas;
 
 
     public HistoriaClinica(Mascota mascota) {
         this.mascota = mascota;
         this.citasTerminadas = new ArrayList<>();
+        this.citas = new ArrayList<>();
         
+    }
+    public ArrayList<AgendaCita> getCitas() {
+        return citas;
+    }
+    public void setCitas(ArrayList<AgendaCita> citas) {
+        this.citas = citas;
     }
 
     public Mascota getMascota() {
