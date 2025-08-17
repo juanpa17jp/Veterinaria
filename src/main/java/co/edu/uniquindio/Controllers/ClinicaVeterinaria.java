@@ -4,8 +4,12 @@ import co.edu.uniquindio.Clases.PersonalApoyo;
 import co.edu.uniquindio.Clases.Propietario;
 import co.edu.uniquindio.Clases.Veterinario;
 import co.edu.uniquindio.Enums.Especialidad;
+import co.edu.uniquindio.Clases.AgendaCita;
+import co.edu.uniquindio.Clases.HistoriaClinica;
+import co.edu.uniquindio.Clases.Cita;
 import java.util.ArrayList;
-
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 public class ClinicaVeterinaria {
@@ -18,6 +22,10 @@ public class ClinicaVeterinaria {
     private ArrayList<Propietario> propietarios;
     private ArrayList<Veterinario> veterinarios;
     private ArrayList<PersonalApoyo> trabajadores;
+    private ArrayList<AgendaCita> citas;
+    private ArrayList<HistoriaClinica> historiasClinicas;
+    private ArrayList<Cita> citasTerminadas;
+    
 
 
 
@@ -30,6 +38,9 @@ public class ClinicaVeterinaria {
         this.propietarios = new ArrayList<>();
         this.veterinarios = new ArrayList<>();
         this.trabajadores = new ArrayList<>();
+        this.citas = new ArrayList<>(); 
+        this.historiasClinicas = new ArrayList<>();
+        this.citas = new ArrayList<>();
     }
 
     public String getNombre() {
@@ -86,6 +97,10 @@ public class ClinicaVeterinaria {
 
     public void setTrabajadores(ArrayList<PersonalApoyo> trabajadores) {
         this.trabajadores = trabajadores;
+    }
+
+    public ArrayList<AgendaCita> getCitas() {
+        return citas;
     }
 
     public boolean registrarMascota(String nombre, String especie, String raza, int edad, String id, String cedulaPropietario) {
@@ -157,5 +172,87 @@ public class ClinicaVeterinaria {
         return true;
     }
 
-}
+    // Metodo para buscar mascota por ID
+    public Mascota buscarMascota(String idMascota) {
+        for (Mascota mascota : mascotas) {
+            if (mascota.getID().equals(idMascota)) {
+                return mascota;
+            }
+        }
+        return null;
+    }
+
+    // Metodo para buscar veterinario por cédula
+    public Veterinario buscarVeterinario(String cedulaVeterinario) {
+        for (Veterinario veterinario : veterinarios) {
+            if (veterinario.getId().equals(cedulaVeterinario)) {
+                return veterinario;
+            }
+        }
+        return null;
+    }
+
+    // Metodo para agendar una cita
+    public boolean agendarCita(String idMascota, String cedulaVeterinario, String motivoConsulta, String fecha, String hora) {
+
+        Mascota mascota = buscarMascota(idMascota);
+        Veterinario veterinario = buscarVeterinario(cedulaVeterinario);
+
+        if (mascota == null || veterinario == null) {
+            return false;
+        }
+
+        // Verificar disponibilidad del veterinario en la fecha y hora especificadas
+        boolean veterinarioDisponible = citas.stream().anyMatch(cita ->
+            cita.getFecha().equals(LocalDate.parse(fecha)) &&
+            cita.getHora().equals(LocalTime.parse(hora)) &&
+            cita.getVeterinarios().contains(veterinario)
+        );
+
+        AgendaCita nuevaCita = new AgendaCita(LocalDate.parse(fecha), LocalTime.parse(hora), motivoConsulta);
+        nuevaCita.getMascotas().add(mascota);
+        nuevaCita.getVeterinarios().add(veterinario);
+
+        return true;
+    }
+
+    // Metodo para obtener todas las citas agendadas en una fecha específica
+    public ArrayList<AgendaCita> obtenerCitasPorFecha(String fecha) {
+        ArrayList<AgendaCita> citasEnFecha = new ArrayList<>();
+        LocalDate fechaConsulta = LocalDate.parse(fecha);
+
+        for (AgendaCita cita : citas) {
+            if (cita.getFecha().equals(fechaConsulta)) {
+                citasEnFecha.add(cita);
+            }
+        }
+        return citasEnFecha;
+    }
+
+    // Metodo para guardar todas las citas de una mascota en su historia clínica
+   public void guardarCitaEnHistoriaClinica(String idMascota,Cita cita) {
+        Mascota mascota = buscarMascota(idMascota);
+        if (mascota == null) throw new IllegalArgumentException("Mascota no encontrada");
+
+        HistoriaClinica historia = historiasClinicas.stream()
+
+            .filter(h -> h.getMascota().getID().equals(idMascota))
+            .findFirst()
+            .orElseGet(() -> {
+
+                HistoriaClinica nuevaHistoria = new HistoriaClinica(mascota);
+                historiasClinicas.add(nuevaHistoria);
+                return nuevaHistoria;
+            });
+
+        historia.agregarCita(cita);
+        }
+    }
+
+    // Funcionalidad unica   
+    //Metodo que permite enviar recordatorios de las citas agendadas a los propietarios de las mascotas
+
+
+
+
 
